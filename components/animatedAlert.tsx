@@ -29,7 +29,6 @@ export default function AnimatedAlert({
 
   useEffect(() => {
     if (visible) {
-      // cuando visible pasa a true, aseguramos que se renderice
       setShouldRender(true);
 
       Animated.parallel([
@@ -45,7 +44,6 @@ export default function AnimatedAlert({
         }),
       ]).start();
 
-      // auto-ocultar después de 3s
       const timeout = setTimeout(() => {
         Animated.parallel([
           Animated.timing(opacity, {
@@ -66,7 +64,6 @@ export default function AnimatedAlert({
 
       return () => clearTimeout(timeout);
     } else if (!visible && shouldRender) {
-      // si visible pasa a false desde el padre, hacemos fade-out
       Animated.parallel([
         Animated.timing(opacity, {
           toValue: 0,

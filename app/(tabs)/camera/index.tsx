@@ -9,15 +9,10 @@ import {
   View,
 } from "react-native";
 
-// importamos el namespace para inspección y uso runtime
 import * as ExpoCamera from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 
-/**
- * Compatibilidad: extraemos el componente Camera en runtime probando varias
- * ubicaciones donde expo-camera podría exportarlo.
- */
 const CameraComponent: any = (
   (ExpoCamera as any).Camera ??
   ((ExpoCamera as any).default && (ExpoCamera as any).default.Camera) ??
@@ -25,7 +20,6 @@ const CameraComponent: any = (
   ExpoCamera
 );
 
-/** Modo simple para cámara */
 type CamMode = "back" | "front";
 
 export default function CameraScreen() {
@@ -41,18 +35,15 @@ export default function CameraScreen() {
   useEffect(() => {
     (async () => {
       try {
-        // --- DEBUG: imprimir las llaves del namespace para ver qué exporta tu versión
         console.log("ExpoCamera keys:", Object.keys(ExpoCamera));
         console.log("ExpoCamera.default (if exists):", (ExpoCamera as any).default);
 
-        // 1) Pedir permiso de cámara (compatibilidad con distintas APIs)
         const camPerm =
           await (ExpoCamera as any).requestCameraPermissionsAsync?.() ??
           await (ExpoCamera as any).getCameraPermissionsAsync?.();
         console.log("camera perm raw:", camPerm);
         setHasCameraPermission((camPerm && camPerm.status) === "granted");
 
-        // 2) Intentar pedir permiso de micrófono (opcional)
         try {
           const micPerm = await (ExpoCamera as any).requestMicrophonePermissionsAsync?.();
           console.log("microphone perm raw:", micPerm);
@@ -60,7 +51,6 @@ export default function CameraScreen() {
           console.log("microphone perm API not available:", e);
         }
 
-        // 3) Pedir permisos de galería / media (guardar)
         const mediaPerm = await MediaLibrary.requestPermissionsAsync();
         console.log("media perm raw:", mediaPerm);
         setHasMediaPermission((mediaPerm && mediaPerm.status) === "granted");
@@ -76,7 +66,6 @@ export default function CameraScreen() {
     if (!cameraRef.current || isTaking) return;
     setIsTaking(true);
     try {
-      // algunos bindings exponen takePictureAsync; probamos con seguridad
       const result =
         (await cameraRef.current.takePictureAsync?.({ quality: 0.7 })) ??
         (await cameraRef.current.takePicture?.({ quality: 0.7 }));
@@ -150,9 +139,6 @@ export default function CameraScreen() {
     <View style={styles.container}>
       {!photoUri ? (
         <View style={styles.cameraWrap}>
-          {/* @ts-ignore: runtime component detection */}
-          {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-          {/* @ts-ignore */}
           <CameraComponent ref={cameraRef} style={styles.camera} type={type as any} ratio="16:9" />
 
           <View style={styles.controls}>

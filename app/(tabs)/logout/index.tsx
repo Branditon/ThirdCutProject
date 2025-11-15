@@ -16,8 +16,6 @@ export default function LogoutScreen() {
         onPress: async () => {
           try {
             await signOut(auth);
-            // opcional: limpiar credenciales guardadas si usas AsyncStorage
-            // await AsyncStorage.removeItem(CREDS_KEY);
           } catch {}
           router.replace("/auth/login");
         },

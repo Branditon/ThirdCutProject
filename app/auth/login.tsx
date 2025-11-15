@@ -29,7 +29,6 @@ function getFirebaseErrorMessage(code: string): string {
   }
 }
 
-// Clave donde vamos a guardar las credenciales en AsyncStorage
 const CREDS_KEY = "@auth_credentials";
 
 export default function Login() {
@@ -50,7 +49,6 @@ export default function Login() {
     setAlertVisible(true);
   };
 
-  // Ver si podemos mostrar el botón de Face ID / huella
   useEffect(() => {
     const checkBiometric = async () => {
       try {
@@ -71,7 +69,6 @@ export default function Login() {
     checkBiometric();
   }, []);
 
-  // Login normal con correo + contraseña
   const loginUser = async () => {
     if (!email || !password) {
       showAlert("Completa correo y contraseña.", "error");
@@ -81,7 +78,6 @@ export default function Login() {
     try {
       await signInWithEmailAndPassword(auth, email.trim(), password);
 
-      // Guardamos credenciales para futuros logins con Face ID / huella
       await AsyncStorage.setItem(
         CREDS_KEY,
         JSON.stringify({ email: email.trim(), password })
@@ -96,7 +92,6 @@ export default function Login() {
     }
   };
 
-  // Login usando Face ID / huella + credenciales guardadas
   const loginWithBiometric = async () => {
     try {
       const saved = await AsyncStorage.getItem(CREDS_KEY);
